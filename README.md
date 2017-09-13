@@ -1,10 +1,10 @@
 SCEP Gem
 ========
-[![Build Status](https://travis-ci.org/onelogin/scep-gem.svg?branch=master)](https://travis-ci.org/onelogin/scep-gem) [![Code Climate](https://codeclimate.com/github/onelogin/scep-gem/badges/gpa.svg)](https://codeclimate.com/github/onelogin/scep-gem)  [![Test Coverage](https://codeclimate.com/github/onelogin/scep-gem/badges/coverage.svg)](https://codeclimate.com/github/onelogin/scep-gem/coverage)
+[![Build Status](https://travis-ci.org/cgthornt/ruby-scep.svg?branch=master)](https://travis-ci.org/cgthornt/ruby-scep) 
+[![Code Climate](https://codeclimate.com/github/cgthornt/ruby-scep/badges/gpa.svg)](https://codeclimate.com/github/cgthornt/ruby-scep)
+[![Test Coverage](https://codeclimate.com/github/cgthornt/ruby-scep/badges/coverage.svg)](https://codeclimate.com/github/cgthornt/ruby-scep/coverage)
 
 Libraries that allow you to be a SCEP server, be a SCEP proxy, etc.
-
-If you believe you have discovered a security vulnerability in this gem, please email security@onelogin.com with a description. You can also use the form based submission located here: https://www.onelogin.com/security. We follow responsible disclosure guidelines, and will work with you to quickly find a resolution.
 
 ## Terminology
 

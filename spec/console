@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 require 'rubygems'
 require 'bundler'
-Bundler.require :default
 require 'scep'
 require 'pry'
 require './spec/spec_helper'
