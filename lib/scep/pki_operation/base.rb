@@ -99,15 +99,6 @@ module SCEP
           OpenSSL::PKCS7::BINARY)
       end
 
-      # Creates an {OpenSSL::Cipher} using the {DEFAULT_CIPHER_ALGORITHM}. It's best to create a new Cipher object
-      # for every new encryption call so that we don't re-use sensitive data (IV's) [citation needed].
-      # @return [OpenSSL::Cipher]
-      def self.create_default_cipher
-        OpenSSL::Cipher.new(DEFAULT_CIPHER_ALGORITHM)
-      end
-
-      protected
-
       def check_if_recipient_matches_ra_certificate_name(p7enc)
         if p7enc.recipients.nil? || p7enc.recipients.empty?
           logger.warn 'SCEP request does not have any recipient info - ' \
@@ -117,7 +108,7 @@ module SCEP
 
         matched = false
         names = p7enc.recipients.map(&:issuer).each do |name|
-          if name.cmp(ra_keypair.certificate.subject) == 0
+          if name.cmp(ra_keypair.certificate.subject).zero?
             matched = true
             break
           end
@@ -139,6 +130,17 @@ module SCEP
           object.to_ary || [object]
         else
           [object]
+        end
+      end
+
+      class << self
+        protected
+
+        # Creates an {OpenSSL::Cipher} using the {DEFAULT_CIPHER_ALGORITHM}. It's best to create a new Cipher object
+        # for every new encryption call so that we don't re-use sensitive data (IV's) [citation needed].
+        # @return [OpenSSL::Cipher]
+        def create_default_cipher
+          OpenSSL::Cipher.new(DEFAULT_CIPHER_ALGORITHM)
         end
       end
     end
