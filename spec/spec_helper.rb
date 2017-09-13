@@ -5,16 +5,15 @@ require 'webmock/rspec'
 require 'scep'
 require 'simplecov'
 
-SimpleCov.start
+SimpleCov.start if ENV['COVERAGE']
 
 def read_fixture(path)
-  File.open(fixture_path path).read
+  File.open(fixture_path(path)).read
 end
 
 def fixture_path(path)
   "spec/fixtures/#{path}"
 end
-
 
 def next_serial
   @serial ||= 0
@@ -55,9 +54,7 @@ def generate_keypair(signer = nil, serial = nil, subj = nil)
     'authorityKeyIdentifier',
     'keyid:alyways,issuer:always')
 
-
   cert.sign signer_private_key, OpenSSL::Digest::SHA1.new
 
-
-  return SCEP::Keypair.new(cert, private_key)
+  SCEP::Keypair.new(cert, private_key)
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SCEP
   # Workaround for issue generating PKCS#7 certificate only in ruby 2.x.
   #
@@ -48,7 +50,6 @@ module SCEP
     # Converts this into an ASN1 sequence
     # @return [OpenSSL::ASN1::Sequence]
     def to_asn1
-
       # Converts to an array of ASN1 encoded certs
       asn1_certs = certificates.map do |cert|
         decode(cert.to_der)

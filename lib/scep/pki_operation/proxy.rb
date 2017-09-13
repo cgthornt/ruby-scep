@@ -1,5 +1,6 @@
-module SCEP
+# frozen_string_literal: true
 
+module SCEP
   module PKIOperation
     # Enables proxying a PKI SCEP request from the DSL to another SCEP server
     # @example
@@ -84,13 +85,12 @@ module SCEP
         response_reencrypted = response.proxy(http_response_body, request.p7sign.certificates, verify_response)
 
         # Package relevant information
-        return Result.new(request.csr, response.signed_certificates, response_reencrypted)
+        Result.new(request.csr, response.signed_certificates, response_reencrypted)
       end
 
       # Contains useful data from the results of proxying a SCEP request. Includes unencrypted
       # CSRs, Signed certificates and encrypted response
       class Result
-
         # The CSR sent to us
         # @return [OpenSSL::X509::Request]
         attr_accessor :csr
@@ -108,7 +108,7 @@ module SCEP
         # @param [OpenSSL::PKCS7] p7enc_response
         def initialize(csr, signed_certificates, p7enc_response)
           @csr = csr
-          @signed_certificates= signed_certificates
+          @signed_certificates = signed_certificates
           @p7enc_response = p7enc_response
         end
       end

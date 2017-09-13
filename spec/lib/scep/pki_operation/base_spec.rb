@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SCEP::PKIOperation::Base do
-  let(:ca_keypair)      { generate_keypair}
+  let(:ca_keypair)      { generate_keypair }
   let(:signed_keypair)  { generate_keypair(ca_keypair) }
   let(:ra_keypair)      { generate_keypair }
   let(:payload)         { 'Hello World!' }
@@ -14,7 +14,6 @@ describe SCEP::PKIOperation::Base do
   end
 
   describe '#unsign_and_unencrypt_raw' do
-
     let(:p7enc)  { OpenSSL::PKCS7.encrypt([ra_keypair.certificate], payload, SCEP::PKIOperation::Base.create_default_cipher, OpenSSL::PKCS7::BINARY) }
     let(:p7sign) { OpenSSL::PKCS7.sign(signed_keypair.certificate, signed_keypair.private_key, p7enc.to_der, [signed_keypair.certificate], OpenSSL::PKCS7::BINARY) }
 
@@ -26,7 +25,6 @@ describe SCEP::PKIOperation::Base do
     end
 
     context 'with verification enabled' do
-
       context 'when verification succeeds' do
         it 'decrypts the payload' do
           base.x509_store.add_cert signed_keypair.certificate
@@ -55,11 +53,11 @@ describe SCEP::PKIOperation::Base do
   end
 
   describe '#check_if_recipient_matches_ra_certificate_name' do
-    let(:misc_keypair) { generate_keypair(nil, nil, '/C=Asdf/O=Fake')  }
-    let(:p7enc)        { OpenSSL::PKCS7.encrypt([target_cert], 'foo', base.class.create_default_cipher)}
+    let(:misc_keypair) { generate_keypair(nil, nil, '/C=Asdf/O=Fake') }
+    let(:p7enc)        { OpenSSL::PKCS7.encrypt([target_cert], 'foo', base.class.create_default_cipher) }
 
     context 'with matching recipients' do
-      let(:target_cert)  { ra_keypair.certificate }
+      let(:target_cert) { ra_keypair.certificate }
 
       it 'returns true' do
         matches = base.send(:check_if_recipient_matches_ra_certificate_name, p7enc)

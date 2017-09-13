@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'logger'
 require 'openssl'
 require 'openssl-extensions/all'
@@ -12,7 +14,6 @@ module SCEP
   autoload :ASN1,           'scep/asn1'
 
   class << self
-
     # Allows you to set the SCEP logger
     # @example
     #   SCEP.logger = Rails.logger

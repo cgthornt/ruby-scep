@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module SCEP
   module PKIOperation
-
     # Represents a SCEP response from the PKIOperation, which can do two of the following:
     #
     # * Parse a response form another SCEP server (useful for proxying)
@@ -35,8 +36,6 @@ module SCEP
     #   encrypted_binary_string = response.encrypt(target_encryption_cert)
     #
     class Response < Base
-
-
       # Adds a single, or many certificates to encrypt and sign further
       # @param [Array<OpenSSL::X509::Certificate>] certs
       def signed_certificates=(certs)

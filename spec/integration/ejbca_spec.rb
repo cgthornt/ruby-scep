@@ -40,21 +40,17 @@ describe 'SCEP and EJBCA' do
     end
 
     it 'signs a CSR' do
-      binding.pry
       puts request.challenge_password
       puts csr.subject
       encrypted = request.encrypt(ra_cert)
 
-      asn1 = OpenSSL::ASN1.decode(encrypted.to_der)
+      # asn1 = OpenSSL::ASN1.decode(encrypted.to_der)
 
-      pkcs_cert_resp_signed = asn1.value[1].value[0]
-      signer_info = pkcs_cert_resp_signed.value[4].value[0]
-      authenticated_attributes = signer_info.value[3]
+      # pkcs_cert_resp_signed = asn1.value[1].value[0]
+      # signer_info = pkcs_cert_resp_signed.value[4].value[0]
+      # authenticated_attributes = signer_info.value[3]
 
-      #digest =
       puts request.challenge_password
-      # binding.pry
-
       puts csr.subject
 
       endpoint.pki_operation(encrypted.to_der)
@@ -71,9 +67,5 @@ describe 'SCEP and EJBCA' do
     it 'foos' do
       puts :foo
     end
-
-
   end
-
-
 end
