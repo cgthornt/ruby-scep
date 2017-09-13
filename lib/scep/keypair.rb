@@ -1,19 +1,11 @@
+# frozen_string_literal: true
+
 module SCEP
   # A public / private keypair
   class Keypair
-
-    # The various cryptosystems we support. Used mostly for ruby 1.8.7, which cannot
-    # automatically determine which cryptosystem is being used.
-    SUPPORTED_CRYPTOSYSTEMS = [
-      OpenSSL::PKey::RSA,
-      OpenSSL::PKey::DSA,
-      OpenSSL::PKey::EC,
-      OpenSSL::PKey::DH
-    ]
-
     # @return [OpenSSL::X509::Certificate]
     attr_accessor :certificate
-    alias_method :cert, :certificate
+    alias cert certificate
 
     # @return [OpenSSL::PKey]
     attr_accessor :private_key
@@ -41,33 +33,12 @@ module SCEP
       new(x509_cert, pkey)
     end
 
-    protected
+    class << self
+      private
 
-    # Reads a DER or PEM encoded private key that is one of the {SUPPORTED_CRYPTOSYSTEMS}. In
-    # ruby 1.9+ we can do this easily. In ruby 1.8.7 we have to keep on guessing until we get
-    # it right.
-    def self.read_private_key(encoded_key, passphrase = nil)
-      # Ruby 1.9.3+
-      if OpenSSL::PKey.respond_to?(:read)
+      def read_private_key(encoded_key, passphrase = nil)
         OpenSSL::PKey.read encoded_key, passphrase
-
-      # Ruby 1.8.7 - keep on guessing which cryptosystem until we're correct
-      else
-        SUPPORTED_CRYPTOSYSTEMS.each do |system|
-          begin
-            return system.new(encoded_key, passphrase)
-          rescue
-          end
-        end
-
-        # If we're here, then the file is probably invalid
-        raise UnsupportedCryptosystem,
-          "Either private key is invalid, passphrase is invalid, or does not support one " \
-          "of cryptosystems: #{SUPPORTED_CRYPTOSYSTEMS.map(&:name).join(', ')}"
       end
     end
-
-
-    class UnsupportedCryptosystem < StandardError; end
   end
 end

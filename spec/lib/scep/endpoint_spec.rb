@@ -1,28 +1,27 @@
 require 'spec_helper'
 
 describe SCEP::Endpoint do
-
   # The CA and RA of our SCEP server
   let(:ca_keypair) { generate_keypair }
-  let(:ra_keypair) { generate_keypair(ca_keypair)}
+  let(:ra_keypair) { generate_keypair(ca_keypair) }
 
   # Not signed by CA!
   let(:invalid_ra_keypair) { generate_keypair }
 
   let(:base_url) { 'http://scep.server' }
-  let(:p7certs_ca_ra) { SCEP::PKCS7CertOnly.new([ca_keypair.cert, ra_keypair.cert])}
+  let(:p7certs_ca_ra) { SCEP::PKCS7CertOnly.new([ca_keypair.cert, ra_keypair.cert]) }
 
-  let(:capabilities) { ['POSTPKIOperation', 'DES3' ]}
+  let(:capabilities) { %w[POSTPKIOperation DES3] }
 
   subject { SCEP::Endpoint.new(base_url) }
 
   # General-purpose stubs
   before do
-    stub_request(:get, "http://scep.server/?operation=GetCACert").
-      to_return(:status => 200, :body => p7certs_ca_ra.to_der, :headers => { 'Content-Type' => 'application/x-x509-ca-ra-cert'})
+    stub_request(:get, 'http://scep.server/?operation=GetCACert')
+      .to_return(status: 200, body: p7certs_ca_ra.to_der, headers: { 'Content-Type' => 'application/x-x509-ca-ra-cert' })
 
-    stub_request(:get, "http://scep.server/?operation=GetCACaps").
-      to_return(:status => 200, :body => capabilities.join("\n"), :headers => {})
+    stub_request(:get, 'http://scep.server/?operation=GetCACaps')
+      .to_return(status: 200, body: capabilities.join("\n"), headers: {})
   end
 
   describe '#ca_certificate' do
@@ -71,7 +70,6 @@ describe SCEP::Endpoint do
 
   describe '#download_certificates' do
     context 'with a valid response' do
-
       context 'with both an CA and RA certificate' do
         it 'successfully assigns #ca_certificate and #ra_certificate' do
           subject.download_certificates
@@ -82,8 +80,8 @@ describe SCEP::Endpoint do
 
       context 'with only a CA certificate' do
         before do
-          stub_request(:get, "http://scep.server/?operation=GetCACert").
-            to_return(:status => 200, :body => ca_keypair.cert.to_der, :headers => { 'Content-Type' => 'application/x-x509-ca-cert'})
+          stub_request(:get, 'http://scep.server/?operation=GetCACert')
+            .to_return(status: 200, body: ca_keypair.cert.to_der, headers: { 'Content-Type' => 'application/x-x509-ca-cert' })
         end
 
         it 'successfully assigns #ca_certificate' do
@@ -96,12 +94,11 @@ describe SCEP::Endpoint do
           expect(subject.ca_certificate).to eql(subject.ra_certificate)
         end
       end
-
     end
 
     context 'with an invalid response' do
       context 'when RA cert is not signed by the CA cert' do
-        let(:p7certs_ca_ra) { SCEP::PKCS7CertOnly.new([ca_keypair.cert, invalid_ra_keypair.cert])}
+        let(:p7certs_ca_ra) { SCEP::PKCS7CertOnly.new([ca_keypair.cert, invalid_ra_keypair.cert]) }
 
         it 'raises a SCEP::ProtocolError' do
           expect {
@@ -112,8 +109,8 @@ describe SCEP::Endpoint do
 
       context 'when the content type is not correct' do
         before do
-          stub_request(:get, "http://scep.server/?operation=GetCACert").
-            to_return(:status => 200, :body => ca_keypair.cert.to_der, :headers => { 'Content-Type' => 'application/octet-stream'})
+          stub_request(:get, 'http://scep.server/?operation=GetCACert')
+            .to_return(status: 200, body: ca_keypair.cert.to_der, headers: { 'Content-Type' => 'application/octet-stream' })
         end
 
         it 'raises a ProtocolError' do
@@ -122,10 +119,6 @@ describe SCEP::Endpoint do
           }.to raise_error(SCEP::Endpoint::ProtocolError, 'SCEP server returned invalid content type of application/octet-stream')
         end
       end
-
-
     end
-
   end
-
 end

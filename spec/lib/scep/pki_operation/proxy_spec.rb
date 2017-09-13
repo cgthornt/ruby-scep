@@ -1,14 +1,13 @@
 require 'spec_helper'
 
 describe SCEP::PKIOperation::Proxy do
-
   let(:endpoint)         { SCEP::Endpoint.new('https://scep.com') }
   let(:our_ra_keypair)   { generate_keypair }
   let(:their_ca_keypair) { generate_keypair }
   let(:original_keypair) { generate_keypair }
   let(:proxy)            { SCEP::PKIOperation::Proxy.new(endpoint, our_ra_keypair) }
   let(:csr)              { OpenSSL::X509::Request.new read_fixture('self-signed.csr') }
-  let(:original_request) { SCEP::PKIOperation::Request.new(original_keypair)}
+  let(:original_request) { SCEP::PKIOperation::Request.new(original_keypair) }
 
   before do
     proxy.add_response_verification_certificate(their_ca_keypair.cert)

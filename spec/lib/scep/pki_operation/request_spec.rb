@@ -1,9 +1,8 @@
 require 'spec_helper'
 
 describe SCEP::PKIOperation::Request do
-
   let(:ra_keypair)   { generate_keypair }
-  let(:misc_keypair) { generate_keypair}
+  let(:misc_keypair) { generate_keypair }
   let(:csr)     { OpenSSL::X509::Request.new read_fixture('self-signed.csr') }
   let(:payload) { csr.to_der }
   let(:p7enc)   { OpenSSL::PKCS7.encrypt([ra_keypair.certificate], payload, SCEP::PKIOperation::Base.create_default_cipher, OpenSSL::PKCS7::BINARY) }
@@ -85,7 +84,7 @@ describe SCEP::PKIOperation::Request do
       encrypted_digest = signer_info.value.last.value
       decrypted_asn1_digest = subject.ra_keypair.private_key.public_decrypt(encrypted_digest)
       decrypted_asn1_digest = OpenSSL::ASN1.decode(decrypted_asn1_digest)
-      return decrypted_asn1_digest.value.last.value
+      decrypted_asn1_digest.value.last.value
     end
 
     it 'correctly generates a new digest' do
@@ -93,7 +92,7 @@ describe SCEP::PKIOperation::Request do
 
       subject.csr = csr
       p7sign = subject.encrypt(misc_keypair.certificate)
-      asn1 =  OpenSSL::ASN1.decode(p7sign.to_der)
+      asn1 = OpenSSL::ASN1.decode(p7sign.to_der)
 
       signer_info = asn1.value[1].value[0].value[4].value[0]
       original_digest = pluck_digest(signer_info)
@@ -103,9 +102,6 @@ describe SCEP::PKIOperation::Request do
       new_digest = pluck_digest(signer_info)
 
       expect(new_digest).to eql(original_digest)
-
-
     end
-
   end
 end

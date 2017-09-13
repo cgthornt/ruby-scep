@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SCEP
   module PKIOperation
     class VerificationFailed < StandardError; end

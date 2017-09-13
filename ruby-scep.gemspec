@@ -1,4 +1,6 @@
 # coding: utf-8
+# frozen_string_literal: true
+
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'scep/version'
@@ -8,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.version       = SCEP::VERSION
   spec.authors       = ['Christopher Thornton']
   spec.email         = ['christopher.thornton@onelogin.com']
-  spec.summary       = %q{SCEP libraries}
-  spec.description   = %q{Makes development of SCEP services easier}
+  spec.summary       = 'SCEP libraries'
+  spec.description   = 'Makes development of SCEP services easier'
   spec.homepage      = 'https://github.com/cgthornt/scep-gem'
   spec.license       = 'MIT'
 
@@ -18,7 +20,6 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.2.0'
-
 
   spec.add_dependency 'openssl-extensions'
   spec.add_dependency 'httparty'
@@ -29,4 +30,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'webmock'
+  spec.add_development_dependency 'rubocop', '~> 0.49.1'
 end

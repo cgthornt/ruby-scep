@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'httparty'
 require 'set'
 
@@ -28,7 +30,7 @@ module SCEP
     attr_accessor :default_options
 
     def initialize(base_uri, default_options = {})
-      @default_options = default_options.merge(:base_uri => base_uri)
+      @default_options = default_options.merge(base_uri: base_uri)
     end
 
     # Gets the CA certificate. Will automatically download the CA certificate from
@@ -37,7 +39,7 @@ module SCEP
     # @raise [ProtocolError] if the SCEP server does not return valid certs
     def ca_certificate
       download_certificates if @ca_certificate.nil?
-      return @ca_certificate
+      @ca_certificate
     end
 
     # Gets the RA certificate.
@@ -68,12 +70,11 @@ module SCEP
       elsif response.content_type == 'application/x-x509-ca-ra-cert'
         handle_ca_ra_cert(response.body)
       else
-        fail ProtocolError, "SCEP server returned invalid content type of #{response.content_type}"
+        raise ProtocolError, "SCEP server returned invalid content type of #{response.content_type}"
       end
-      return response
+      response
     end
-    alias_method :get_ca_cert, :download_certificates
-
+    alias get_ca_cert download_certificates
 
     # Gets server capabilities. Memoized version of {#fetch_capabilities}
     # @return [Set<String>] a set of capabilities
@@ -89,7 +90,7 @@ module SCEP
       caps = response.body.strip.split("\n")
       @capabilities = Set.new(caps)
       logger.debug "SCEP endpoint supports capabilities: #{@capabilities.inspect}"
-      return @capabilities
+      @capabilities
     end
 
     # Whether the SCEP endpoint supports the POSTPKIOperation
@@ -103,25 +104,24 @@ module SCEP
     # @param [String] message an optional message to send
     # @return [HTTParty::Response] the httparty response
     def scep_request(operation, message = nil, is_post = false)
-      query = { :operation => operation }
+      query = { operation: operation }
       query[:message] = message unless message.nil?
       if is_post
         logger.debug "Executing POST ?operation=#{operation}"
-        response = self.class.post '/', { :query => { :operation => operation}, :body => message }.merge(default_options)
+        response = self.class.post '/', { query: { operation: operation }, body: message }.merge(default_options)
       else
         logger.debug "Executing GET ?operation=#{operation}&message=#{message}"
-        response = self.class.get '/', { :query => query }.merge(default_options)
+        response = self.class.get '/', { query: query }.merge(default_options)
       end
 
       if response.code != 200
-        logger.debug "Response body:"
+        logger.debug 'Response body:'
         logger.debug response.body
         raise ProtocolError, "SCEP request returned non-200 code of #{response.code}"
       end
 
-      return response
+      response
     end
-
 
     # @todo: handle GET PKIOperations
     # @todo: verify actually signed by CA?
@@ -133,7 +133,7 @@ module SCEP
         raise ProtocolError,
           "SCEP PKIOperation didn't return content-type of application/x-pki-message (returned #{response.content_type})"
       end
-      return response.body
+      response.body
     end
 
     protected
@@ -142,7 +142,7 @@ module SCEP
       logger.debug 'SCEP server does not support RA certificate - only using CA cert'
       @ca_certificate = OpenSSL::X509::Certificate.new(response_body)
     rescue StandardError
-      fail ProtocolError, 'SCEP server did not return parseable X509::Certificate'
+      raise ProtocolError, 'SCEP server did not return parseable X509::Certificate'
     end
 
     def handle_ca_ra_cert(response_body)
@@ -151,16 +151,16 @@ module SCEP
       begin
         pcerts = PKCS7CertOnly.decode(response_body)
       rescue StandardError
-        fail ProtocolError, 'SCEP server did not return a parseable PKCS#7'
+        raise ProtocolError, 'SCEP server did not return a parseable PKCS#7'
       end
 
-      fail ProtocolError,
-           'SCEP server did not return two certificates in PKCS#7 cert chain' unless
-        pcerts.certificates.length == 2
-
+      unless pcerts.certificates.length == 2
+        raise ProtocolError,
+             'SCEP server did not return two certificates in PKCS#7 cert chain'
+      end
 
       unless pcerts.certificates[1].verify(pcerts.certificates[0].public_key)
-        fail ProtocolError,
+        raise ProtocolError,
           'RA certificate must be signed by CA certificate when using RA/CA cert combination'
       end
 

@@ -1,7 +1,7 @@
+# frozen_string_literal: true
+
 module SCEP
-
   module PKIOperation
-
     # Handles decoding or creation of a scep CSR request.
     #
     # ## EJBCA Support
@@ -35,7 +35,6 @@ module SCEP
     #   request.encrypt(target_encryption_cert)
     #
     class Request < Base
-
       # The certificate request
       # @return [OpenSSL::X509::Request]
       attr_accessor :csr
@@ -65,7 +64,7 @@ module SCEP
       #   this obsolete!
       # @return [Boolean] whether to tamper with the SCEP message type
       attr_accessor :tamper_scep_message_type
-      alias_method :tamper_scep_message_type?, :tamper_scep_message_type
+      alias tamper_scep_message_type? tamper_scep_message_type
 
       def initialize(ra_keypair)
         super
@@ -153,12 +152,12 @@ module SCEP
         signer_info = pkcs_cert_resp_signed.value[4].value[0]
         authenticated_attributes = signer_info.value[3]
         authenticated_attributes.value << SCEP::ASN1.message_type(SCEP::ASN1::MESSAGE_TYPE_PKCS_REQ)
-        # todo: broken?? --
+        # TODO: broken?? --
         # recalculate_authenticated_attributes_digest(signer_info)
-        return OpenSSL::PKCS7.new(asn1.to_der)
+        OpenSSL::PKCS7.new(asn1.to_der)
       end
 
-      # todo: this currently does not work! Kept here for future purposes
+      # TODO: this currently does not work! Kept here for future purposes
       def recalculate_authenticated_attributes_digest(signer_info)
         digest_algorithm = signer_info.value[2].value[0].sn # => "SHA256"
 
@@ -185,7 +184,6 @@ module SCEP
       #   ])
       #   attribute
       # end
-
     end
   end
 end

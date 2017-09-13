@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module SCEP
   module PKIOperation
-
     # Base class that contains commonalities between both requests and repsonses:
     #
     # * {#ra_certificate RA Certificate}
@@ -45,7 +46,7 @@ module SCEP
       def add_verification_certificate(cert)
         x509_store.add_cert(cert)
       end
-      alias_method :verify_against, :add_verification_certificate
+      alias verify_against add_verification_certificate
 
       protected
 
@@ -65,14 +66,13 @@ module SCEP
         # See http://openssl.6102.n7.nabble.com/pkcs7-verification-with-ruby-td28455.html
         verified = @p7sign.verify([], x509_store, nil, flags)
 
-        if !verified
+        unless verified
           raise SCEP::PKIOperation::VerificationFailed,
             'Unable to verify signature against certificate store - did you add the correct certificates?'
         end
 
-
         # Decrypt
-        @p7enc   = OpenSSL::PKCS7.new(@p7sign.data)
+        @p7enc = OpenSSL::PKCS7.new(@p7sign.data)
         check_if_recipient_matches_ra_certificate_name(@p7enc)
         @p7enc.decrypt(ra_keypair.private_key, ra_keypair.certificate, OpenSSL::PKCS7::BINARY)
       end
@@ -125,7 +125,7 @@ module SCEP
 
         unless matched
           logger.warn 'SCEP request does not appear to be addressed to us! ' \
-            "RA Cert: #{ra_keypair.certificate.subject.to_s}, Recipients: [#{names.map(&:to_s).join(', ')}]"
+            "RA Cert: #{ra_keypair.certificate.subject}, Recipients: [#{names.map(&:to_s).join(', ')}]"
         end
         matched
       end

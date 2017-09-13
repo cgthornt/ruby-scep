@@ -1,15 +1,13 @@
 require 'spec_helper'
 
 describe SCEP::PKIOperation::Response do
-
   let(:ra_keypair)    { generate_keypair }
-  let(:our_keypair)   { generate_keypair}
+  let(:our_keypair)   { generate_keypair }
   let(:response_cert) { generate_keypair.cert }
 
   let(:payload) { SCEP::PKCS7CertOnly.new([response_cert]).to_der }
   let(:p7enc)   { OpenSSL::PKCS7.encrypt([our_keypair.certificate], payload, SCEP::PKIOperation::Base.create_default_cipher, OpenSSL::PKCS7::BINARY) }
   let(:p7sign)  { OpenSSL::PKCS7.sign(ra_keypair.certificate, ra_keypair.private_key, p7enc.to_der, [ra_keypair.certificate], OpenSSL::PKCS7::BINARY) }
-
 
   describe '#decrypt' do
     it 'assigns #signed_certificates correctly' do
@@ -32,5 +30,4 @@ describe SCEP::PKIOperation::Response do
       expect(final_response.signed_certificates.first.to_pem).to eql(response_cert.to_pem)
     end
   end
-
 end

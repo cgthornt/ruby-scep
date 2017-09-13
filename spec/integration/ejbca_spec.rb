@@ -51,7 +51,7 @@ describe 'SCEP and EJBCA' do
       signer_info = pkcs_cert_resp_signed.value[4].value[0]
       authenticated_attributes = signer_info.value[3]
 
-      #digest =
+      # digest =
       puts request.challenge_password
       # binding.pry
 
@@ -71,9 +71,5 @@ describe 'SCEP and EJBCA' do
     it 'foos' do
       puts :foo
     end
-
-
   end
-
-
 end
