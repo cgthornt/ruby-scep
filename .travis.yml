@@ -2,11 +2,12 @@ language: ruby
 cache: bundler
 env:
   CODECLIMATE_REPO_TOKEN: be4f4e286fa5db2e40681be7865078e9206d00f1bec2979b3a320232609625d8
+  COVERAGE: true
 rvm:
   - 2.2.7
   - 2.4.1
 script:
-  - bundle exec rspec spec/lib
+  - bundle exec rspec spec/lib --format progress
   - bundle exec rubocop --display-cop-names
 after_success:
   - bundle exec codeclimate-test-reporter

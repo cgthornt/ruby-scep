@@ -48,6 +48,13 @@ module SCEP
       end
       alias verify_against add_verification_certificate
 
+      # Creates an {OpenSSL::Cipher} using the {DEFAULT_CIPHER_ALGORITHM}. It's best to create a new Cipher object
+      # for every new encryption call so that we don't re-use sensitive data (IV's) [citation needed].
+      # @return [OpenSSL::Cipher]
+      def self.create_default_cipher
+        OpenSSL::Cipher.new(DEFAULT_CIPHER_ALGORITHM)
+      end
+
       protected
 
       # Takes a raw binary string and returns the raw, unencrypted data
@@ -130,17 +137,6 @@ module SCEP
           object.to_ary || [object]
         else
           [object]
-        end
-      end
-
-      class << self
-        protected
-
-        # Creates an {OpenSSL::Cipher} using the {DEFAULT_CIPHER_ALGORITHM}. It's best to create a new Cipher object
-        # for every new encryption call so that we don't re-use sensitive data (IV's) [citation needed].
-        # @return [OpenSSL::Cipher]
-        def create_default_cipher
-          OpenSSL::Cipher.new(DEFAULT_CIPHER_ALGORITHM)
         end
       end
     end

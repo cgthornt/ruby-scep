@@ -5,7 +5,7 @@ require 'webmock/rspec'
 require 'scep'
 require 'simplecov'
 
-SimpleCov.start
+SimpleCov.start if ENV['COVERAGE']
 
 def read_fixture(path)
   File.open(fixture_path(path)).read
